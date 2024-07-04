@@ -250,6 +250,9 @@ footer {
     padding: 15px 0;
   }
 
+  .left-nav {
+    margin-left: 35%;
+  }
   .right-nav {
     display: none;
   }
