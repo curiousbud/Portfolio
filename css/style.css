@@ -1,0 +1,273 @@
+:root {
+  --bg: #000000;
+  --clr: #74bcdc;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  /* background: url("images/bg-oni.png") no-repeat; */
+  background-color: black;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+body::-webkit-scrollbar {
+  width: 0; /* For WebKit browsers (Chrome, Safari) */
+}
+
+header {
+  background-color: rgba(0, 0, 0, 1);
+  text-align: center;
+  padding: 5px 20px 0px 10px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* left-nav */
+.logo-name {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
+.name {
+  color: #74bcdc;
+  z-index: 2;
+  transition: 0.5s;
+}
+
+.logo-name a {
+  position: relative;
+  list-style: none;
+  width: 8rem;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.5s;
+  text-decoration: none;
+  z-index: 1; /* Ensure the icon is above the pseudo-elements */
+}
+
+.logo-name a::before {
+  content: "";
+  position: absolute;
+  inset: 30px;
+  box-shadow: 0 0 0 10px var(--clr), 0 0 0 20px var(--bg), 0 0 0 22px var(--clr);
+  transition: 0.5s;
+  z-index: -1; /* Move the pseudo-element below the icon */
+}
+
+.logo-name a:hover::before {
+  inset: 15px;
+}
+
+.logo-name a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  transform: rotate(45deg);
+  transition: 0.5s;
+  text-align: center;
+}
+
+.logo-name a:hover::after {
+  inset: 0px;
+  transform: rotate(0deg);
+}
+.logo-name a i {
+  font-size: 2em;
+  transition: 0.5s;
+  color: var(--clr);
+  opacity: 1;
+  z-index: 2; /* Adjusted z-index to 2 */
+}
+
+.logo-name a:hover h1 {
+  color: var(--clr);
+  transform: translateY(-40%);
+  z-index: 2; /* Adjusted z-index to 2 */
+}
+
+.logo-name a p {
+  position: absolute;
+  font-family: sans-serif;
+  color: var(--clr);
+  opacity: 0;
+  transition: 0.5s;
+  transform: scale(0) translateY(200%);
+  z-index: 1; /* Adjusted z-index to 1 */
+}
+
+.logo-name a:hover p {
+  opacity: 1;
+  transform: scale(1) translateY(100%);
+  z-index: 1; /* Adjusted z-index to 1 */
+}
+
+.logo-name a:hover h1,
+.logo-name a p {
+  filter: drop-shadow(0 0 20px var(--clr)) drop-shadow(0 0 40px var(--clr))
+    drop-shadow(0 0 60px var(--clr));
+}
+/* left-nav */
+
+.nav-buttons {
+  position: relative;
+  display: flex;
+  gap: 50px;
+}
+
+.nav-buttons a {
+  position: relative;
+  list-style: none;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.5s;
+  text-decoration: none;
+  z-index: 1; /* Ensure the icon is above the pseudo-elements */
+}
+
+.nav-buttons a::before {
+  content: "";
+  position: absolute;
+  inset: 30px;
+  box-shadow: 0 0 0 10px var(--clr), 0 0 0 20px var(--bg), 0 0 0 22px var(--clr);
+  transition: 0.5s;
+  z-index: -1; /* Move the pseudo-element below the icon */
+}
+
+.nav-buttons a:hover::before {
+  inset: 15px;
+}
+
+.nav-buttons a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  transform: rotate(45deg);
+  transition: 0.5s;
+}
+
+.nav-buttons a:hover::after {
+  inset: 0px;
+  transform: rotate(0deg);
+}
+.nav-buttons a i {
+  font-size: 2em;
+  transition: 0.5s;
+  color: var(--clr);
+  opacity: 1;
+  z-index: 2; /* Adjusted z-index to 2 */
+}
+
+.nav-buttons a:hover i {
+  color: var(--clr);
+  transform: translateY(-40%);
+  z-index: 2; /* Adjusted z-index to 2 */
+}
+
+.nav-buttons a span {
+  position: absolute;
+  font-family: sans-serif;
+  color: var(--clr);
+  opacity: 0;
+  transition: 0.5s;
+  transform: scale(0) translateY(200%);
+  z-index: 1; /* Adjusted z-index to 1 */
+}
+
+.nav-buttons a:hover span {
+  opacity: 1;
+  transform: scale(1) translateY(100%);
+  z-index: 1; /* Adjusted z-index to 1 */
+}
+
+.nav-buttons a:hover i,
+.nav-buttons a span {
+  filter: drop-shadow(0 0 20px var(--clr)) drop-shadow(0 0 40px var(--clr))
+    drop-shadow(0 0 60px var(--clr));
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.container a i {
+  color: whitesmoke;
+  background-color: rgba(255, 255, 255, 0.358);
+  padding: 10px 10px;
+}
+
+h2 {
+  border-bottom: 2px solid #74bcdc;
+  padding-bottom: 5px;
+  color: #74bcdc;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+.project {
+  margin-bottom: 20px;
+}
+
+footer {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #74bcdc;
+  text-align: center;
+  padding: 10px 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  header {
+    padding: 15px 0;
+  }
+
+  .right-nav {
+    display: none;
+  }
+
+  .right-nav.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    text-align: center;
+  }
+
+  .right-nav.active a {
+    display: block;
+    margin: 10px 0;
+  }
+}
