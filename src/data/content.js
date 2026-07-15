@@ -6,7 +6,7 @@ import { config } from '../../portfolio.config.js';
 
 export const profile = {
   ...config.base,
-  githubUrl: config.social.github || `https://github.com/${config.base.githubUsername}`,
+  githubUrl: socialUrl(config.social.github) || `https://github.com/${config.base.githubUsername}`,
 };
 
 export const theme = config.theme;
@@ -31,7 +31,7 @@ const SOCIAL_LABELS = {
 export const socials = Object.entries(config.social)
   .map(([key, val]) => {
     const isObj = val && typeof val === 'object';
-    const url = isObj ? val.url : val;
+    const url = socialUrl(val);
     if (!url) return null;                         // '' / missing → hidden
     const def = SOCIAL_LABELS[key];
     return {
@@ -83,4 +83,9 @@ export const nav = [
 
 function tail(url) {
   return url.replace(/\/+$/, '').split('/').pop().replace(/^@/, '');
+}
+
+// A social entry is either a plain URL string or { url, handle, label }.
+function socialUrl(val) {
+  return (val && typeof val === 'object' ? val.url : val) || '';
 }
