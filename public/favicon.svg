@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <filter id="g" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#g)" fill="none" stroke="#74bcdc" stroke-width="2"
+     stroke-linejoin="round" stroke-linecap="round">
+    <!-- icosahedron-style crystal silhouette -->
+    <polygon points="32,10 52,22 52,42 32,54 12,42 12,22"/>
+    <path d="M32,10 32,54 M12,22 52,42 M52,22 12,42 M32,10 12,42 M32,10 52,42"/>
+  </g>
+  <polygon points="32,10 52,22 32,32 12,22" fill="#74bcdc" opacity="0.18"/>
+</svg>

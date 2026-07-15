@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0e0f12" />
+    <meta name="description" content="Areeb Khan — Web Developer. CS graduate working across the web, NLP and security." />
+    <title>Areeb Khan</title>
+
+    <!-- Favicon: neon crystal monogram, self-hosted. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!--
+      JetBrains Mono is SELF-HOSTED from /public/fonts (see @font-face in
+      src/styles/main.css) — no external font CDN. To use the true
+      "JetBrains Mono Nerd Font" with terminal glyphs, replace the .woff2
+      files in public/fonts with the Nerd Font build of the same names.
+    -->
+    <link rel="preload" href="/fonts/jetbrains-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-800.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <!-- Fixed WebGL layer behind everything. -->
+    <canvas id="webgl" aria-hidden="true"></canvas>
+
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="nav" data-nav>
+      <a class="nav__brand" href="#top">Areeb Khan</a>
+      <nav class="nav__links" data-nav-links></nav>
+    </header>
+    <!-- Slide-in overflow / mobile menu (populated by render.js) -->
+    <aside class="nav__menu" data-nav-menu aria-hidden="true"></aside>
+
+    <main id="top">
+      <!-- HERO -->
+      <section class="hero" id="hero">
+        <div class="hero__inner">
+          <p class="hero__eyebrow">Web Developer</p>
+          <h1 class="hero__title" data-hero-title>Areeb Khan</h1>
+          <p class="hero__tagline"></p>
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="#work">View work</a>
+            <a class="btn btn--ghost" href="#contact">Get in touch</a>
+          </div>
+        </div>
+        <div class="hero__scroll" aria-hidden="true">scroll</div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="section" id="about">
+        <p class="section__index">01</p>
+        <h2 class="section__title" data-reveal>About</h2>
+        <p class="about__body" data-reveal data-about></p>
+        <p class="about__meta" data-reveal data-location></p>
+      </section>
+
+      <!-- SKILLS -->
+      <section class="section" id="skills">
+        <p class="section__index">02</p>
+        <h2 class="section__title" data-reveal>Skills</h2>
+        <ul class="skills" data-skills></ul>
+      </section>
+
+      <!-- GITHUB WORDMARK (3D, morphs in before the projects) -->
+      <a class="wordmark" data-wordmark href="#" aria-label="GitHub profile">
+        <span class="wordmark__text" data-wordmark-text>curiousbud</span>
+      </a>
+
+      <!-- WORK -->
+      <section class="section" id="work">
+        <p class="section__index">03</p>
+        <h2 class="section__title" data-reveal>Selected work</h2>
+        <div class="work" data-projects></div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section section--contact" id="contact">
+        <p class="section__index">04</p>
+        <h2 class="section__title contact__title" data-reveal>Let's build something.</h2>
+        <a class="contact__mail" data-contact-mail href="#">akareeb662@gmail.com</a>
+        <ul class="contact__socials" data-socials></ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Areeb Khan</span>
+      <span data-year></span>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,577 @@
+/* ============================================================
+   Design tokens
+   ============================================================ */
+:root {
+  /* Pure black base — matches the live site */
+  --bg:          #000000;
+  --bg-elev:     #0a0c0e;
+  --line:        #1a2026;
+
+  /* Neon sky-blue accent (live-site --clr: #74bcdc) */
+  --neon:        #74bcdc;
+  --neon-bright: #a6dcf2;
+  --neon-deep:   #2b7ba3;
+
+  /* Aliases kept so existing rules resolve to the neon palette */
+  --gold:        var(--neon);
+  --gold-bright: var(--neon-bright);
+  --blue:        var(--neon);
+  --blue-bright: var(--neon-bright);
+
+  /* Neon glow used on headings / brand */
+  --glow: 0 0 8px rgba(116, 188, 220, 0.55),
+          0 0 22px rgba(116, 188, 220, 0.35);
+
+  /* Ink */
+  --text:        #ffffff;
+  --muted:       #7f95a1;
+
+  --font: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --maxw: 1080px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================================
+   Self-hosted JetBrains Mono (no external font CDN).
+   To switch to the true Nerd Font build (terminal glyphs),
+   replace these .woff2 files in public/fonts with the Nerd
+   Font versions using the same filenames.
+   ============================================================ */
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/jetbrains-mono-300.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/jetbrains-mono-400.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/jetbrains-mono-500.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/jetbrains-mono-700.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/jetbrains-mono-800.woff2') format('woff2'); }
+
+/* ============================================================
+   Reset
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* So anchor jumps land below the fixed header (JS scroll also offsets). */
+main section[id] { scroll-margin-top: 5rem; }
+
+/* ============================================================
+   WebGL canvas + grain overlay
+   ============================================================ */
+#webgl {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Content sits above the canvas. */
+.nav, main, .footer { position: relative; z-index: 2; }
+
+/* ============================================================
+   Nav
+   ============================================================ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;                 /* above <main> so nav links are clickable */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem clamp(1.25rem, 5vw, 3rem);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  backdrop-filter: blur(2px);
+  pointer-events: none;        /* transparent area lets clicks pass through */
+}
+.nav__brand, .nav__links { pointer-events: auto; }  /* but these are clickable */
+.nav__brand {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--neon);
+  text-shadow: var(--glow);
+}
+.nav__links { display: flex; gap: 1.75rem; }
+/* Neon underline that expands from the centre on hover / active section. */
+.nav__links a {
+  position: relative;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.45rem 0.15rem;
+  transition: color 0.3s var(--ease);
+}
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 50%; right: 50%; bottom: -2px;
+  height: 2px;
+  background: var(--neon);
+  box-shadow: var(--glow);
+  opacity: 0;
+  transition: left 0.32s var(--ease), right 0.32s var(--ease), opacity 0.32s var(--ease);
+}
+.nav__links a:hover { color: var(--text); }
+.nav__links a:hover::after,
+.nav__links a.is-active::after { left: 0; right: 0; opacity: 1; }
+.nav__links a.is-active { color: var(--neon); text-shadow: var(--glow); }
+
+/* Overflow items are hidden from the bar on desktop (they live in the menu). */
+.nav__link--overflow { display: none; }
+
+/* Hamburger button — shown only when there's overflow (or on mobile). */
+.nav__burger {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 36px; height: 32px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.nav__burger:hover { border-color: var(--neon); box-shadow: 0 0 12px rgba(116,188,220,0.3); }
+.nav__burger span {
+  display: block; width: 18px; height: 2px;
+  background: var(--neon); box-shadow: var(--glow);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.nav[data-has-overflow] .nav__burger { display: inline-flex; }
+.nav__burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav__burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav__burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* Slide-in menu panel */
+.nav__menu {
+  position: fixed;
+  top: 0; right: 0;
+  z-index: 30;
+  height: 100vh;
+  width: min(320px, 82vw);
+  padding: 5.5rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  background: rgba(6, 8, 10, 0.97);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid var(--line);
+  transform: translateX(100%);
+  transition: transform 0.4s var(--ease);
+  pointer-events: none;
+}
+.nav__menu.is-open {
+  transform: translateX(0);
+  pointer-events: auto;
+  box-shadow: -20px 0 60px rgba(0,0,0,0.6);
+}
+.nav__menu-link {
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.3s var(--ease);
+}
+.nav__menu-link:hover,
+.nav__menu-link.is-active { color: var(--neon); text-shadow: var(--glow); }
+
+/* Mobile: collapse the bar entirely into the hamburger. */
+@media (max-width: 700px) {
+  .nav__links a.nav__link { display: none; }
+  .nav__burger { display: inline-flex; }
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 clamp(1.25rem, 5vw, 3rem);
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+.hero__eyebrow {
+  color: var(--neon);
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  text-shadow: var(--glow);
+}
+.hero__title {
+  font-size: clamp(3rem, 12vw, 9rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-shadow: 0 0 18px rgba(116, 188, 220, 0.25);
+}
+/* per-character spans injected by JS for the reveal */
+.hero__title .char { display: inline-block; will-change: transform; }
+.hero__tagline {
+  color: var(--muted);
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  max-width: 34ch;
+  margin-top: 1.5rem;
+}
+.hero__cta { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; }
+
+.btn {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.85rem 1.6rem;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  transition: transform 0.3s var(--ease), background 0.3s var(--ease), color 0.3s var(--ease);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn--primary {
+  background: var(--neon);
+  color: #041016;
+  box-shadow: 0 0 18px rgba(116, 188, 220, 0.4);
+}
+.btn--primary:hover {
+  background: var(--neon-bright);
+  box-shadow: 0 0 26px rgba(116, 188, 220, 0.6);
+}
+.btn--ghost { border-color: var(--line); color: var(--text); }
+.btn--ghost:hover { border-color: var(--neon); box-shadow: 0 0 16px rgba(116, 188, 220, 0.3); }
+
+.hero__scroll {
+  position: absolute;
+  bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ============================================================
+   Sections
+   ============================================================ */
+.section {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(3.5rem, 8vh, 6rem) clamp(1.25rem, 5vw, 3rem);
+}
+/* Custom-section text blocks */
+.section__prose { color: var(--muted); max-width: 62ch; font-size: 1.02rem; }
+.section__prose p + p { margin-top: 1rem; }
+.section__prose a { color: var(--neon); border-bottom: 1px solid transparent; transition: border-color 0.3s var(--ease); }
+.section__prose a:hover { border-color: var(--neon); }
+.section__prose ul { margin-top: 0.75rem; padding-left: 1.2rem; list-style: disc; }
+.section__prose li { margin-bottom: 0.4rem; }
+.section__index {
+  color: var(--gold);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.75rem;
+}
+.section__title {
+  font-size: clamp(1.8rem, 5vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 2.5rem;
+  position: relative;
+  display: inline-block;
+}
+.section__title::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -0.6rem;
+  width: 2.5rem; height: 2px;
+  background: var(--neon);
+  box-shadow: var(--glow);
+}
+
+.about__body {
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  max-width: 60ch;
+  color: var(--text);
+}
+.about__meta { color: var(--muted); margin-top: 1.5rem; font-size: 0.9rem; }
+
+/* Skills → 3D animated tech symbols */
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1.4rem;
+}
+.tech { list-style: none; perspective: 800px; }
+.tech__inner {
+  transform-style: preserve-3d;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
+  padding: 2.2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  will-change: transform;
+  animation: floaty 6s ease-in-out infinite;
+  transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.tech:nth-child(3n) .tech__inner { animation-delay: -1.5s; }
+.tech:nth-child(3n+1) .tech__inner { animation-delay: -3s; }
+.tech:hover .tech__inner {
+  border-color: var(--neon);
+  box-shadow: 0 12px 34px rgba(0,0,0,0.5), 0 0 24px rgba(116, 188, 220, 0.25);
+}
+.tech__icon {
+  width: 60px; height: 60px;
+  color: var(--brand);
+  transform: translateZ(40px);
+  filter: drop-shadow(0 0 9px color-mix(in srgb, var(--brand) 55%, transparent));
+}
+.tech__name {
+  font-size: 0.95rem;
+  color: var(--muted);
+  transform: translateZ(20px);
+  transition: color 0.3s var(--ease);
+}
+.tech:hover .tech__name { color: var(--text); }
+.tech__dot { width: 12px; height: 12px; border-radius: 50%; background: var(--neon); box-shadow: var(--glow); }
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+  50%      { transform: translateY(-6px) rotateX(5deg) rotateY(-5deg); }
+}
+
+/* GitHub username — 3D extruded wordmark before the projects */
+.wordmark {
+  display: block;
+  text-align: center;
+  margin: clamp(1.5rem, 5vh, 3.5rem) auto 0;
+  padding: clamp(1rem, 4vh, 2.5rem) 1rem;
+  text-decoration: none;
+  perspective: 900px;
+}
+/* Pull the projects up so the wordmark doesn't leave a big empty gap. */
+.wordmark + .section { padding-top: clamp(1.25rem, 3vh, 2.5rem); }
+.wordmark__text {
+  display: inline-block;
+  font-size: clamp(2.4rem, 13vw, 9.5rem);
+  font-weight: 800;
+  line-height: 1.18;
+  padding-bottom: 0.12em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+  transform-style: preserve-3d;
+  text-shadow:
+     1px 1px 0 var(--neon-bright),
+     2px 2px 0 var(--neon-bright),
+     4px 4px 0 var(--neon),
+     6px 6px 0 var(--neon),
+     8px 8px 0 var(--neon-deep),
+    10px 10px 0 var(--neon-deep),
+    12px 16px 24px rgba(0,0,0,0.65);
+  transition: transform 0.5s var(--ease);
+}
+/* Inner wrapper takes the cursor-driven 3D tilt (GSAP owns .wordmark__text). */
+.wordmark__tilt {
+  display: inline-block;
+  transform-style: preserve-3d;
+  transition: transform 0.4s var(--ease);
+}
+/* Each letter lifts toward you on hover. */
+.wm-char {
+  display: inline-block;
+  transform-style: preserve-3d;
+  transition: transform 0.3s var(--ease), color 0.3s var(--ease);
+  cursor: pointer;
+}
+.wm-char:hover {
+  transform: translateY(-0.1em) translateZ(40px) scale(1.06);
+  color: var(--neon-bright);
+}
+
+/* Work — spaced card grid with preview images */
+.work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.75rem;
+}
+.project {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.4s var(--ease),
+              transform 0.4s var(--ease),
+              box-shadow 0.4s var(--ease);
+}
+.project:hover {
+  border-color: var(--neon);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 24px rgba(116, 188, 220, 0.15);
+}
+.project__media {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: #0a0c0e;
+}
+.project__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s var(--ease);
+}
+.project:hover .project__media img { transform: scale(1.05); }
+/* Placeholder for projects with no live site (no GitHub avatar shown) */
+.project__media--ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+  background:
+    radial-gradient(120% 120% at 30% 15%, rgba(116,188,220,0.16), rgba(0,0,0,0) 60%),
+    #0a0c0e;
+}
+.project__media--ph span {
+  font-size: clamp(1.3rem, 4vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--neon);
+  text-shadow: var(--glow);
+  opacity: 0.9;
+}
+.project__body {
+  padding: 1.5rem clamp(1.25rem, 3vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+.project__name {
+  font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.project__name a { color: inherit; text-decoration: none; }
+.project__name .arrow { color: var(--neon-bright); display: inline-block; transition: transform 0.3s var(--ease); }
+.project:hover .project__name .arrow { transform: translate(4px, -4px); }
+.project__tagline { color: var(--neon); font-size: 0.8rem; }
+.project__desc { color: var(--muted); font-size: 0.92rem; }
+.project__tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; }
+.project__tags span {
+  font-size: 0.7rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+.project__links { display: flex; gap: 1.5rem; padding-top: 0.25rem; }
+.project__links a {
+  font-size: 0.75rem;
+  color: var(--neon);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s var(--ease);
+}
+.project__links a:hover { border-color: var(--neon); text-shadow: var(--glow); }
+
+/* Contact */
+.section--contact { text-align: left; }
+.contact__title { max-width: 20ch; }
+.contact__mail {
+  display: inline-block;
+  font-size: clamp(1.4rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--neon-bright);
+  text-shadow: var(--glow);
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s var(--ease);
+}
+.contact__mail:hover { border-color: var(--neon); }
+.contact__socials { display: flex; gap: 2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+.contact__socials a {
+  color: var(--muted);
+  font-size: 0.9rem;
+  transition: color 0.3s var(--ease);
+}
+.contact__socials a:hover { color: var(--blue-bright); }
+.contact__socials .handle { display: block; color: var(--text); }
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem clamp(1.25rem, 5vw, 3rem);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   Responsive pass
+   ============================================================ */
+@media (max-width: 900px) {
+  .hero__tagline { max-width: 100%; }
+}
+@media (max-width: 640px) {
+  .skills { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .tech__inner { padding: 1.2rem 0.75rem; }
+  .contact__socials { gap: 1.25rem; }
+  .footer { flex-direction: column; gap: 0.5rem; }
+  /* Lighter 3D extrude so the wordmark isn't overpowering on small screens */
+  .wordmark__text {
+    text-shadow:
+       1px 1px 0 var(--neon-bright),
+       3px 3px 0 var(--neon),
+       5px 5px 0 var(--neon-deep),
+       7px 9px 14px rgba(0,0,0,0.6);
+  }
+}
+@media (max-width: 400px) {
+  .skills { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   Reveal state (driven by GSAP; safe default if JS/anim off)
+   ============================================================ */
+[data-reveal] { opacity: 1; }
+.js-anim [data-reveal] { opacity: 0; transform: translateY(24px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .js-anim [data-reveal] { opacity: 1; transform: none; }
+}
