@@ -239,9 +239,14 @@ export const config = {
    *                      reduced-motion regardless of this setting.
    *  enableTechSymbols → reserved flag for the 3D skill symbols (kept for
    *                      future use; the CSS-3D cards are always lightweight).
+   *  showSectionNumbers → the small accent numbers above each section heading
+   *                      ("01" over About, "02" over Skills…). Set false to
+   *                      remove them everywhere — headings move up to close the
+   *                      gap, and custom sections follow the same setting.
    */
   options: {
     enable3DCrystal: true,
     enableTechSymbols: true,
+    showSectionNumbers: false,
   },
 };

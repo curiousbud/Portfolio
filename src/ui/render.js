@@ -2,7 +2,7 @@
  * Renders content from portfolio.config.js (via data/content.js) into the
  * static HTML shell. Only module that touches innerHTML.
  */
-import { profile, socials, skills, projects, theme, sections, customSections, navbar } from '../data/content.js';
+import { profile, socials, skills, projects, theme, sections, customSections, navbar, options } from '../data/content.js';
 import { techIcons } from '../data/tech-icons.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -157,12 +157,16 @@ function renderSections() {
     else document.getElementById('contact')?.before(sec);
   });
 
-  // 3) Renumber indices from the final DOM order.
+  // 3) Renumber indices from the final DOM order — or strip them entirely
+  //    when config.options.showSectionNumbers is off.
+  const showNumbers = options.showSectionNumbers !== false;
   const secs = [...document.querySelectorAll('main section[id]')]
     .filter((s) => !s.classList.contains('hero'));
   secs.forEach((s, i) => {
     const idx = s.querySelector('.section__index');
-    if (idx) idx.textContent = String(i + 1).padStart(2, '0');
+    if (!idx) return;
+    if (!showNumbers) idx.remove();
+    else idx.textContent = String(i + 1).padStart(2, '0');
   });
 
   buildNavbar(secs);
